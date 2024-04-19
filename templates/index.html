@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="author" content="Matthew Taylor" />
+    <meta name="description" content="Fashion Pixel Labeling and Utilities" />
+    <title>Fashion Pixel Project</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" type="text/css" href="static/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Fashion Pixel Project</h1>
+      <span>by: Matthew Taylor</span>
+      <br />
+      <a href="/report">View Report</a>
+      <br />
+      <p>Upload an image and choose an algorithm to apply</p>
+      <div>
+        <label for="inputImage">Select Image</label>
+        <input type="file" id="inputImage" accept="image/*" required />
+      </div>
+      <br />
+      <div>
+        <label for="algorithm">Choose which image operation to apply:</label>
+        <select name="algorithm" id="algorithm" required>
+          <option value="" disabled selected>Select an Algorithm</option>
+          <option value="binary">
+            Binary Pixel Label (person, background)
+          </option>
+          <option value="multilabel">
+            Multiclass Pixel Label (skin, hair, tshirt, shoes, pants, dress,
+            background)
+          </option>
+          <option value="binary_seg">
+            Binary Segmentation (person, background)
+          </option>
+          <option value="multilabel_super">
+            Multiclass Pixel Label with superpixel (skin, hair, tshirt, shoes,
+            pants, dress, background)
+          </option>
+          <option value="gaussian">Gaussian (apply a gaussian filter)</option>
+        </select>
+        <button id="processButton">Process Image</button>
+      </div>
+      <br />
+      <div>
+        <img id="croppedImage" src="" alt="Input Image" />
+      </div>
+      <br />
+      <div id="loadingBar"></div>
+      <div>
+        <img id="outputImage" src="" alt="Output Image" />
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <script>
+      const inputImage = document.getElementById("inputImage");
+      const algorithmSelect = document.getElementById("algorithm");
+      const processButton = document.getElementById("processButton");
+      const croppedImage = document.getElementById("croppedImage");
+      const outputImage = document.getElementById("outputImage");
+      let cropper;
+      let endpoint;
+
+      inputImage.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const imageUrl = event.target.result;
+          croppedImage.src = imageUrl;
+          if (cropper) {
+            cropper.destroy();
+          }
+          cropper = new Cropper(croppedImage, {
+            aspectRatio: 2 / 3,
+            viewMode: 1,
+          });
+        };
+        reader.readAsDataURL(file);
+      });
+
+      algorithmSelect.addEventListener("change", () => {
+        endpoint = algorithmSelect.value;
+      });
+
+      processButton.addEventListener("click", () => {
+        if (!endpoint) {
+          alert("Please choose an algorithm");
+          return;
+        }
+        const canvas = cropper.getCroppedCanvas({ width: 400, height: 600 });
+        document.getElementById("loadingBar").style.display = "block";
+
+        canvas.toBlob((blob) => {
+          const formData = new FormData();
+          formData.append("file", blob);
+
+          var xhr = new XMLHttpRequest();
+          xhr.open("POST", `http://127.0.0.1:5000/${endpoint}`, true);
+          xhr.onload = function () {
+            if (xhr.status === 200) {
+              document.getElementById("loadingBar").style.display = "none";
+              outputImage.src = `data:image/png;base64,${JSON.parse(xhr.responseText).image}`;
+            }
+          };
+          xhr.send(formData);
+        });
+      });
+    </script>
+  </body>
+</html>

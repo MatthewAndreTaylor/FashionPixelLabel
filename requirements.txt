@@ -1,0 +1,12 @@
+torch~=2.1.2+cu121
+numpy~=1.23.5
+Flask~=2.2.5
+Pillow~=9.3.0
+scikit-image~=0.22.0
+torchvision~=0.16.2
+crfseg~=1.0.0
+opencv-python~=4.8.1.78
+tqdm~=4.66.1
+matplotlib~=3.6.2
+opencv-python~=4.8.1.78
+opencv-python-headless~=4.9.0.80
