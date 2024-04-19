@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify, send_file
 from PIL import Image, ImageFilter
 from skimage.segmentation import felzenszwalb
+from skimage import color
 import torch
 from utils import to_tensor_lab, remove_small_artifacts
 import numpy as np
@@ -145,6 +146,8 @@ def multilabel_super():
     pred_mask = multi_model(image_tensor.cuda())
     pred_mask = pred_mask.argmax(dim=1).cpu().numpy()[0]
     pred_mask = remove_small_artifacts(pred_mask)
+    numpy_image[pred_mask == 0] = [0, 0, 0]
+
     segments_fz = felzenszwalb(numpy_image, scale=100, min_size=100, channel_axis=2)
     superpixel_mask = get_superpixel_mask(numpy_image, segments_fz)
     prediction = np.zeros((pred_mask.shape[0], pred_mask.shape[1], 3), dtype=np.uint8)
@@ -162,6 +165,28 @@ def multilabel_super():
             continue
 
     image = Image.fromarray(prediction)
+    buffered = io.BytesIO()
+    image.save(buffered, format="PNG")
+    img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
+    return jsonify({"image": img_str})
+
+
+@app.route("/superpixels", methods=["POST"])
+def superpixels():
+    file = request.files["file"]
+    image = Image.open(file)
+
+    numpy_image = np.array(image)[:, :, :3]
+    image_tensor = to_tensor_lab(numpy_image)
+    pred_mask = binary_model(image_tensor.cuda())
+    pred_mask = pred_mask.argmax(dim=1).cpu().numpy()[0]
+    pred_mask = remove_small_artifacts(pred_mask)
+    numpy_image[pred_mask == 0] = [0, 0, 0]
+    segments_fz = felzenszwalb(numpy_image, scale=150, min_size=100, channel_axis=2)
+    superpixel_mask = get_superpixel_mask(numpy_image, segments_fz)
+    colorized_mask = color.label2rgb(superpixel_mask, image=numpy_image, kind="avg")
+
+    image = Image.fromarray((colorized_mask * 255).astype(np.uint8))
     buffered = io.BytesIO()
     image.save(buffered, format="PNG")
     img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")

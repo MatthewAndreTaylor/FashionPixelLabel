@@ -261,6 +261,14 @@ python app.py
 
 or try the notebooks
 
+Main implementation is in `mynotebook.ipynb`
+
+Super pixel extensions are in `superpixel.ipynb`
+
+Testing out pose dectection is in `mypose.ipynb`
+
+My other trial code for U-2-NET ... is in `/trials`
+
 <br>
 
 dataset adapted from:
