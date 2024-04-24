@@ -94,6 +94,14 @@ The ResNet backbone of the DeepLabv3 model consists of multiple layers of bottle
 
 Then comes the ASPP module. What separates DeepLabv3 is the use of the atrous spatial pyramid pooling (ASPP) operation. Each atrous convolution can be represented as a fully connected layer. The larger ASPP layer captures multi-scale information from this.
 
+employ multiple parallel dilated (atrous) convolutions with different rates.
+ASPP module operates on the feature maps produced by the encoder part of the network and applies dilated convolutions with different dilation rates.
+Atrous Spatial Pyramid Pooling
+Goal: enlarge the receptive field of the network without increasing the number of parameters or downsampling the features
+Allows the deeplab models Ive coded to capture both local details and global context
+Using multiple parallel dilated convolutions helps to analyze the the image at multiple scales and aggreagate information from different receptive fields.
+Precise, robust, (hopefully scale invariant)
+
 Finally, the decoder module acts as a refiner over the features predicted in the ASPP layer and makes the final pixel labeling prediction.
 
 #### training process

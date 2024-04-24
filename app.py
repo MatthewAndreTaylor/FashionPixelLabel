@@ -47,6 +47,14 @@ def get_superpixel_mask(image, segments) -> list:
 def index():
     return render_template("index.html")
 
+@app.route("/nets", methods=["GET"])
+def nets():
+    return render_template("nets.html")
+
+@app.route("/superpixel", methods=["GET"])
+def superpixel():
+    return render_template("superpixel.html")
+
 
 @app.route("/report", methods=["GET"])
 def report():
