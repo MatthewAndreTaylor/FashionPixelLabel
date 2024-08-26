@@ -4,7 +4,10 @@ Goal 1: Automatically label each pixel as either `person` or `background`
 
 Goal 2: Automatically label each pixel as either: `background`, `skin`, `hair`, `t-shirt`, `shoes`, `pants`, `dress`
 
+![demo](https://github.com/user-attachments/assets/65024d3b-e390-46ea-9f74-f4cd7218a0b5)
+
 ## Approaches
+
 
 - Convolutional neural networks
 - Edge detection
