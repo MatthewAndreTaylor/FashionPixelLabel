@@ -18,10 +18,12 @@
       <p>Select an image and choose an algorithm to apply</p>
       
       <div class="gallery">
-        <label class="upload-box" for="inputImage">
+
+        <div class="upload-box">
           <span>Choose File</span>
-        </label>
-        <input type="file" id="inputImage" accept="image/*" required />
+          <input type="file" id="inputImage" accept="image/*" required />
+        </div>
+
         <img src="static/example_0.jpg" onclick="selectImage(this)">
         <img src="static/example_1.jpg" onclick="selectImage(this)">
       </div>

@@ -112,10 +112,13 @@ button:hover {
   align-items: center;
   justify-content: center;
   border: 2px dashed #ccc;
-  cursor: pointer;
 }
 #inputImage {
-  display: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
 }
 
 #cropperContainer {
