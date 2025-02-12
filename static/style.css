@@ -53,25 +53,6 @@ a {
   text-align: center;
 }
 
-input[type="file"] {
-  display: none;
-}
-
-label[for="inputImage"] {
-  display: block;
-  background-color: #3498db;
-  color: #fff;
-  text-align: center;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-label[for="inputImage"]:hover {
-  background-color: #2980b9;
-}
-
 select,
 button {
   display: block;
@@ -133,8 +114,8 @@ button:hover {
   border: 2px dashed #ccc;
   cursor: pointer;
 }
-.upload-box input {
-  cursor: pointer;
+#inputImage {
+  display: none;
 }
 
 #cropperContainer {
