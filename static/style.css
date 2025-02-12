@@ -145,7 +145,7 @@ button:hover {
 
 #outputImage {
   width: 18em;
-  display: block;
+  display: none;
   margin-inline: auto;
 }
 
