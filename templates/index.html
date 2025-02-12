@@ -5,66 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="author" content="Matthew Taylor" />
     <meta name="description" content="Fashion Pixel Labeling and Utilities" />
-    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="static/favicon.ico">
     <title>Fashion Pixel Project</title>
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css"
-      rel="stylesheet"
-    />
     <link rel="stylesheet" type="text/css" href="static/style.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js" defer></script>
   </head>
   <body>
     {% include 'header.html' %}
     <br />
     <div class="container">
-      <p>Upload an image and choose an algorithm to apply</p>
-      <div>
-        <label for="inputImage">Select Image</label>
-        <input type="file" id="inputImage" accept="image/*" required />
+      <p>Select an image and choose an algorithm to apply</p>
+      
+      <div class="gallery">
+        <div class="upload-box">
+          <span>Choose File</span>
+          <input type="file" id="inputImage" accept="image/*" required />
+        </div>
+        <img src="static/example_0.jpg" onclick="selectImage(this)">
+        <img src="static/example_1.jpg" onclick="selectImage(this)">
+      </div>
+      <br />
+      <div id="cropperContainer">
+        <img id="croppedImage" src="" alt="Input Image" hidden/>
       </div>
       <br />
       <div>
         <label for="algorithm">Choose which image operation to apply:</label>
         <select name="algorithm" id="algorithm" required>
           <option value="" disabled selected>Select an Algorithm</option>
-          <option value="binary">
-            Binary Pixel Label (person, background)
-          </option>
-          <option value="multilabel">
-            Multiclass Pixel Label (skin, hair, tshirt, shoes, pants, dress,
-            background)
-          </option>
-          <option value="binary_seg">
-            Binary Segmentation (person, background)
-          </option>
-          <option value="multilabel_super">
-            Multiclass Pixel Label with superpixel (skin, hair, tshirt, shoes,
-            pants, dress, background)
-          </option>
-          <option value="superpixels">
-            Extract super pixels
-          </option>
+          <option value="binary">Binary Pixel Label (person, background)</option>
+          <option value="multilabel">Multiclass Pixel Label (skin, hair, tshirt, shoes, pants, dress, background)</option>
+          <option value="binary_seg">Binary Segmentation (person, background)</option>
+          <option value="multilabel_super">Multiclass Pixel Label with superpixel (skin, hair, tshirt, shoes, pants, dress, background)</option>
+          <option value="superpixels">Extract super pixels</option>
           <option value="gaussian">Gaussian (apply a gaussian filter)</option>
         </select>
         <button id="processButton">Process Image</button>
       </div>
       <br />
-      <div>
-        <img id="croppedImage" src="" alt="Input Image" />
-      </div>
-      <br />
       <div id="loadingBar"></div>
       <div>
-        <img id="outputImage" src="" alt="Output Image" />
+        <img id="outputImage" src="" alt="Output Image"/>
       </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <script>
       const inputImage = document.getElementById("inputImage");
+      const croppedImage = document.getElementById("croppedImage");
       const algorithmSelect = document.getElementById("algorithm");
       const processButton = document.getElementById("processButton");
-      const croppedImage = document.getElementById("croppedImage");
       const outputImage = document.getElementById("outputImage");
+      const cropperContainer = document.getElementById("cropperContainer");
       let cropper;
       let endpoint;
 
@@ -77,13 +68,18 @@
           if (cropper) {
             cropper.destroy();
           }
-          cropper = new Cropper(croppedImage, {
-            aspectRatio: 2 / 3,
-            viewMode: 1,
-          });
+          cropper = new Cropper(croppedImage, {aspectRatio: 2 / 3, viewMode: 1});
         };
         reader.readAsDataURL(file);
       });
+
+      function selectImage(imgElement) {
+        croppedImage.src = imgElement.src;
+        if (cropper) {
+          cropper.destroy();
+        }
+        cropper = new Cropper(croppedImage, {aspectRatio: 2 / 3, viewMode: 1});
+      }
 
       algorithmSelect.addEventListener("change", () => {
         endpoint = algorithmSelect.value;
@@ -100,12 +96,12 @@
         canvas.toBlob((blob) => {
           const formData = new FormData();
           formData.append("file", blob);
-
           var xhr = new XMLHttpRequest();
           xhr.open("POST", `/${endpoint}`, true);
           xhr.onload = function () {
             if (xhr.status === 200) {
               document.getElementById("loadingBar").style.display = "none";
+              outputImage.style.display = "block";
               outputImage.src = `data:image/png;base64,${JSON.parse(xhr.responseText).image}`;
             }
           };

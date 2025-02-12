@@ -32,7 +32,6 @@ nav a:hover {
 }
 
 .container {
-  max-width: 600px;
   margin: 0 auto;
   padding: 20px;
   background-color: #fff;
@@ -107,6 +106,47 @@ button:hover {
   width: 30px;
   height: 30px;
   animation: spin 1s linear infinite;
+}
+
+.gallery {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
+}
+.gallery img {
+  max-width: 20vw;
+  max-height: 15em;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+.gallery img:hover {
+  border: 2px solid #3498db;
+}
+.upload-box {
+  width: 10em;
+  max-width: 20vw;
+  max-height: 15em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #ccc;
+  cursor: pointer;
+}
+.upload-box input {
+  cursor: pointer;
+}
+
+#cropperContainer {
+  width: 15em;
+  height: 15em;
+  margin-inline: auto;
+}
+
+#outputImage {
+  width: 18em;
+  display: block;
+  margin-inline: auto;
 }
 
 @keyframes spin {
